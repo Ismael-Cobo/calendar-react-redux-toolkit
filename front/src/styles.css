@@ -38,3 +38,24 @@
     outline: none;
     padding: 10px;
 }
+
+/* FABS */
+
+.fab {
+    position: fixed;
+
+
+    border-radius: 50%;
+    height: 60px;
+    width: 60px;
+}
+
+.fab__addnew {
+    right: 25px;
+    bottom: 25px;
+}
+
+.fab__delete {
+    left: 25px;
+    bottom: 25px;
+}

@@ -22,7 +22,6 @@ export const CalendarModal = () => {
       isOpen={isDateModalOpen}
       onRequestClose={onCloseModal}
       style={customStyles}
-      contentLabel='Example Modal'
       className='modal'
       overlayClassName='modal-fondo'
     >
