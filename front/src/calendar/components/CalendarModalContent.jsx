@@ -6,8 +6,9 @@ import { registerLocale } from 'react-datepicker'
 import { addHours, differenceInSeconds } from 'date-fns'
 import es from 'date-fns/locale/es'
 
+import { useCalendarstore, useUiStore } from '../../hooks'
+
 import 'react-datepicker/dist/react-datepicker.css'
-import { useCalendarstore } from '../../hooks'
 
 registerLocale('es', es)
 
@@ -15,11 +16,12 @@ const initModalContent = {
   title: '',
   notes: '',
   start: new Date(),
-  end: addHours(new Date(), 2),
+  end: addHours(new Date(), 1),
 }
 
 export const CalendarModalContent = () => {
-  const { activeEvent } = useCalendarstore()
+  const { activeEvent, startSavingEvent } = useCalendarstore()
+  const { closeDateModal } = useUiStore()
 
   const [formValues, setFormValues] = useState(initModalContent)
 
@@ -45,34 +47,44 @@ export const CalendarModalContent = () => {
     setFormValues((prev) => ({ ...prev, [key]: value }))
   }
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
 
+    if (validateForm()) {
+      await startSavingEvent(formValues)
+      closeDateModal()
+    }
+  }
+
+  const validateForm = () => {
     const timeDif = differenceInSeconds(end, start)
 
+    console.log(title.length)
     if (isNaN(start)) {
       setValidations((prev) => ({ ...prev, start: true }))
-      return
+      return false
     }
 
     if (isNaN(end)) {
       setValidations((prev) => ({ ...prev, end: true }))
-      return
+      return false
     }
 
     if (timeDif < 0 || isNaN(timeDif)) {
       setValidations((prev) => ({ ...prev, start: true, end: true }))
-      return
+      return false
     }
 
     setValidations((prev) => ({ ...prev, start: false, end: false }))
 
     if (title.length <= 0) {
       setValidations((prev) => ({ ...prev, title: true }))
-      return
+      return false
     }
 
     setValidations((prev) => ({ ...prev, title: false }))
+
+    return true
   }
 
   return (

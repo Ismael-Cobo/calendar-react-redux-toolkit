@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { Calendar } from 'react-big-calendar'
 
-import { NavbarCalendar, CalendarEvent, CalendarModal } from '../components'
+import { NavbarCalendar, CalendarEvent, CalendarModal, FabAddNew, FabDeleteEvent } from '../components'
 
 import { localizer, getMessagesES, eventsStyleGetter } from '../../utils/calendar'
 
@@ -12,7 +12,7 @@ import { useCalendarstore, useUiStore } from '../../hooks'
 export const CalendarPage = () => {
   const [view, setView] = useState(localStorage.getItem('view') || 'month')
   const { openDateModal } = useUiStore()
-  const { events, setActiveEvent } = useCalendarstore()
+  const { events, setActiveEvent, activeEvent } = useCalendarstore()
 
   const onDoubleClickEvent = (props) => {
     openDateModal()
@@ -48,6 +48,8 @@ export const CalendarPage = () => {
         view={view}
       />
       <CalendarModal />
+      <FabAddNew />
+      {activeEvent && <FabDeleteEvent />}
     </>
   )
 }
