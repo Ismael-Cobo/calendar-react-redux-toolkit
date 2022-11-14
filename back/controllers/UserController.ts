@@ -1,19 +1,19 @@
 import { Request, Response } from 'express'
-import { User } from '../models/User'
+import { findOneById, saveOneUser, updateOneUser, deleteOneUser, findAllNotDeletedUsers } from '../services/UserService'
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
-    const user = await User.findAll()
+    const user = await findAllNotDeletedUsers()
 
     res.status(200).json({
       ok: true,
       msg: 'Datos recibidos correctamente',
       data: user,
     })
-  } catch (error) {
-    res.status(500).json({
+  } catch (e) {
+    res.status(e.statusCode).json({
       ok: false,
-      msg: 'Error getUsers',
+      msg: e.message,
       data: null,
     })
   }
@@ -23,92 +23,55 @@ export const getUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
 
-    const user = await User.findByPk(id)
-
-    if (!user) {
-      return res.status(404).json({
-        ok: false,
-        msg: 'El usuario no se ha podido encontrar',
-        data: null,
-      })
-    }
+    const user = await findOneById(id)
 
     res.status(200).json({
       ok: true,
       msg: 'Usuario enviado correctamente',
       data: user,
     })
-  } catch (error) {
-    res.status(500).json({
+  } catch (e) {
+    res.status(e.statusCode).json({
       ok: false,
-      msg: 'Error getUser',
+      msg: e.message,
       data: null,
     })
   }
 }
 
-export const saveUser = async (req: Request, res: Response) => {
+export const saveUser = async ({ body }: Request, res: Response) => {
   try {
-    const { body } = req
-
-    const { email } = body
-
-    const userExistByEmail = await User.findOne({ where: { email } })
-
-    if (userExistByEmail) {
-      return res.status(400).json({
-        ok: false,
-        msg: 'El usuario ya existe con ese correo electrónico',
-        data: null,
-      })
-    }
-
-    const user = await User.create({ ...body, state: 1 })
-
-    await user.save()
+    const user = await saveOneUser({ ...body, state: false })
 
     res.status(200).json({
       ok: true,
       msg: 'Usuario guardado correctamente',
       data: user,
     })
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({
+  } catch (e) {
+    res.status(e.statusCode).json({
       ok: false,
-      msg: 'Error saveUser',
+      msg: e.message,
       data: null,
     })
   }
 }
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async ({ params, body }: Request, res: Response) => {
   try {
-    const { id } = req.params
-    const { body } = req
+    const { id } = params
 
-    const userExist = await User.findOne({
-      where: { id },
-    })
-
-    if (!userExist) {
-      return res.status(404).json({
-        ok: false,
-        msg: 'El usuario no existe',
-        data: null,
-      })
-    }
+    const user = await updateOneUser({ ...body, id })
 
     res.status(200).json({
       ok: true,
       msg: 'Usuario actualizado correctamente',
-      data: userExist,
+      data: user,
     })
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({
+  } catch (e) {
+    res.status(e.statusCode).json({
       ok: false,
-      msg: 'Error updateUser',
+      msg: e.message,
       data: null,
     })
   }
@@ -118,27 +81,17 @@ export const deleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
 
-    const user = await User.findByPk(id)
-
-    if (!user) {
-      return res.status(404).json({
-        ok: false,
-        msg: 'El usuario no existe',
-        data: null,
-      })
-    }
-
-    await user.update({ state: 0 })
+    const user = await deleteOneUser(id)
 
     res.status(200).json({
       ok: true,
       msg: 'Usuario borrado correctamente',
       data: user,
     })
-  } catch (error) {
-    res.status(500).json({
+  } catch (e) {
+    res.status(e.statusCode).json({
       ok: false,
-      msg: 'Error deleteUser',
+      msg: e.message,
       data: null,
     })
   }

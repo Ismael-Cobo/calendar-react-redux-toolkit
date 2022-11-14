@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import db from '../db/connection'
+import { UserInterface } from '../interfaces/User'
 
 export const User = db.define(
   'Users',
