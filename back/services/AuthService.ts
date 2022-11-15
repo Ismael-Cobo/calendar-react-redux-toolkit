@@ -3,6 +3,7 @@ import { UserInterface } from '../interfaces/User'
 import { User } from '../models/User'
 import { UserNotFound } from '../handlers/errors/UserNotFound'
 import { verifyPassword } from '../handlers/bcrypt/bcrypt'
+import { generateToken } from '../handlers/jwt/jwt'
 
 export const registerNewUser = async ({ email, name, password }: UserInterface) => {
   const checkUserExist = await User.findOne({ where: { email } })
@@ -23,5 +24,12 @@ export const login = async ({ email, password }: UserInterface) => {
 
   if (!passwordHashed) throw new UserNotFound('Credenciales incorrectas', 400)
 
-  return userToFind
+  const token = generateToken(email)
+
+  const data = {
+    ...userToFind.dataValues,
+    token,
+  }
+
+  return data
 }
