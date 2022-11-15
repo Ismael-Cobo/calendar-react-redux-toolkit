@@ -3,6 +3,7 @@ import { UserInterface } from '../interfaces/User'
 import { User } from '../models/User'
 
 import { IllegalArguments, UserAlreadyExists, UserNotFound } from '../handlers'
+import { encryptPassword } from '../handlers/bcrypt/bcrypt'
 
 export const findAllUsers = async () => {
   return await User.findAll()
@@ -36,7 +37,9 @@ export const saveOneUser = async (user: UserInterface) => {
 
   if (userToFind) throw new UserAlreadyExists('El usuario ya existe con ese email', 400)
 
-  return await User.create({ ...user })
+  const passwordHashed = await encryptPassword(user.password)
+
+  return await User.create({ ...user, password: passwordHashed })
 }
 
 export const updateOneUser = async (user: UserInterface) => {
