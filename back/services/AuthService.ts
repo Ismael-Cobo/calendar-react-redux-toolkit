@@ -24,7 +24,7 @@ export const login = async ({ email, password }: UserInterface) => {
 
   if (!passwordHashed) throw new UserNotFound('Credenciales incorrectas', 400)
 
-  const token = generateToken(email)
+  const token = generateToken({ id: `${userToFind.id}` || '', email })
 
   const data = {
     ...userToFind.dataValues,
