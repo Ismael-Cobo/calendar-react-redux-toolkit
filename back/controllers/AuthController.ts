@@ -1,9 +1,13 @@
 import { Request, Response } from 'express'
+import { RequestExtended } from '../interfaces/RequestExtended'
 import { login, registerNewUser } from '../services/AuthService'
 
-export const loginController = async ({ body }: Request, res: Response) => {
+export const loginController = async (req: RequestExtended, res: Response) => {
   try {
+    const { body } = req
     const user = await login(body)
+
+    console.log(req.user)
 
     return res.status(200).json({
       ok: true,

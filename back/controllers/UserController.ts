@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { findOneById, saveOneUser, updateOneUser, deleteOneUser, findAllNotDeletedUsers } from '../services/UserService'
+import { RequestExtended } from '../interfaces/RequestExtended'
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -57,16 +58,16 @@ export const saveUser = async ({ body }: Request, res: Response) => {
   }
 }
 
-export const updateUser = async ({ params, body }: Request, res: Response) => {
+export const updateUser = async ({ params, body }: RequestExtended, res: Response) => {
   try {
     const { id } = params
 
-    const user = await updateOneUser({ ...body, id })
+    const userDB = await updateOneUser({ ...body, id })
 
     res.status(200).json({
       ok: true,
       msg: 'Usuario actualizado correctamente',
-      data: user,
+      data: userDB,
     })
   } catch (e) {
     res.status(e.statusCode).json({
