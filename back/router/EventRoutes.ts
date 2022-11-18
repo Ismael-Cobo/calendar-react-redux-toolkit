@@ -7,12 +7,13 @@ import {
   updateEvent,
   deleteEvent,
 } from '../controllers/CalendarController'
+import { checkJwt, isSameUser } from '../middlewares'
 
 export const eventRouter = Router()
 
-eventRouter.get('/', getEvents)
-eventRouter.get('/user/:id', getEventsByUserId)
-eventRouter.get('/:id', getEventById)
-eventRouter.post('/', saveEvent)
-eventRouter.put('/', updateEvent)
-eventRouter.delete('/:id', deleteEvent)
+eventRouter.get('/', checkJwt, getEvents)
+eventRouter.get('/user/:id', [checkJwt, isSameUser], getEventsByUserId)
+eventRouter.get('/:id', checkJwt, getEventById)
+eventRouter.post('/', checkJwt, saveEvent)
+eventRouter.put('/', [checkJwt, isSameUser], updateEvent)
+eventRouter.delete('/:id', [checkJwt, isSameUser], deleteEvent)
