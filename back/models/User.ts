@@ -3,8 +3,13 @@ import db from '../db/connection'
 import { UserInterface } from '../interfaces/User'
 
 export const User = db.define<UserInterface>(
-  'Users',
+  'users',
   {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     name: {
       type: DataTypes.STRING,
     },
@@ -19,5 +24,5 @@ export const User = db.define<UserInterface>(
       type: DataTypes.BOOLEAN,
     },
   },
-  { timestamps: false, tableName: 'Users' }
+  { timestamps: false, tableName: 'users' }
 )
