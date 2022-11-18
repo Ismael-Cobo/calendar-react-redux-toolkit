@@ -28,6 +28,8 @@ export const findOneByEmail = async (email: string) => {
 
   const userToFind = await User.findOne({ where: { email } })
   if (!userToFind) throw new UserNotFound('El usuario no se ha podido encontrar', 404)
+
+  return userToFind
 }
 
 export const saveOneUser = async (user: UserInterface) => {
