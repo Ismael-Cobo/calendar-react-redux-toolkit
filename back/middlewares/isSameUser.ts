@@ -7,7 +7,7 @@ export const isSameUser = ({ params, user }: RequestExtended, res: Response, nex
   if (user?.id && String(user.id) !== id) {
     return res.status(403).json({
       ok: false,
-      msg: 'No estás autorizado a modificar las propiedades usuario',
+      msg: 'No estás autorizado a modificar las propiedades',
       data: null,
     })
   }
