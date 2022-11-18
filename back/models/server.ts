@@ -1,8 +1,7 @@
 import express, { Application } from 'express'
 import cors from 'cors'
 
-import { userRouter } from '../router/UserRoutes'
-import { authRouter } from '../router/AuthRoutes'
+import { authRouter, userRouter, eventRouter } from '../router'
 
 import db from '../db/connection'
 
@@ -12,6 +11,7 @@ export class Server {
   private apiPath = {
     users: '/api/users',
     auth: '/api/auth',
+    event: '/api/event',
   }
 
   constructor() {
@@ -41,11 +41,12 @@ export class Server {
   routes() {
     this.app.use(this.apiPath.users, userRouter)
     this.app.use(this.apiPath.auth, authRouter)
+    this.app.use(this.apiPath.event, eventRouter)
   }
 
   async dbConnection() {
     try {
-      await db.authenticate()
+      await db.sync()
       console.log('database online')
     } catch (error) {
       console.log(error)
