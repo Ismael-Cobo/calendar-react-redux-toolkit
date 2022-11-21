@@ -10,9 +10,7 @@ export const notificationSlice = createSlice({
       state.notifications.push(payload)
     },
     removeNotification: (state, { payload }) => {
-      state.notifications = state.notifications.filter((el) => {
-        el.id !== payload.id
-      })
+      state.notifications = state.notifications.filter((el) => el.id !== payload.id)
     },
   },
 })
