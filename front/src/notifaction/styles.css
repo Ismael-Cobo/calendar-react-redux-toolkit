@@ -1,0 +1,90 @@
+/* Notification */
+.notification-wrapper {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 300px;
+    z-index: 9999;
+}
+
+.notification-item {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    padding: 5px 0 0 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+    animation: show_slide 0.8s ease forwards;
+    width: 300px;
+}
+
+@keyframes show_slide {
+    0% {
+        transform: translateX(100%);
+    }
+
+    40% {
+        transform: translateX(-10%);
+    }
+
+    80% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-10px);
+    }
+}
+
+.notification-item.exit {
+    animation: exit_slide 0.8s ease forwards;
+}
+
+.notification-item.exitWithLoader {
+    animation: exit_slide 2s ease forwards;
+}
+
+
+
+
+@keyframes exit_slide {
+    0% {
+        transform: translateX(-10px);
+    }
+
+    40% {
+        transform: translateX(0);
+    }
+
+    80% {
+        transform: translateX(-10%);
+    }
+
+    100% {
+        transform: translateX(110%);
+    }
+}
+
+.notification-item p {
+    padding: 0;
+    margin: 10px;
+}
+
+.notification-item .bar {
+    height: 10px;
+}
+
+.notification-item.success .bar {
+    background-color: rgb(61, 167, 61);
+}
+
+.notification-item.error .bar {
+    background-color: rgb(211, 54, 54);
+}
+
+.notification-item.loading .bar {
+    background-color: var(--secondary-color);
+}
+
+/* End Notification */

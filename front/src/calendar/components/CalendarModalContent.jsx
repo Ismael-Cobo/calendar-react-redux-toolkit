@@ -6,9 +6,10 @@ import { registerLocale } from 'react-datepicker'
 import { addHours, differenceInSeconds } from 'date-fns'
 import es from 'date-fns/locale/es'
 
-import { useCalendarstore, useUiStore } from '../../hooks'
+import { useCalendarstore, useUiStore, useNotificationStore } from '../../hooks'
 
 import 'react-datepicker/dist/react-datepicker.css'
+import { notificationTypes } from '../../notifaction'
 
 registerLocale('es', es)
 
@@ -22,6 +23,7 @@ const initModalContent = {
 export const CalendarModalContent = () => {
   const { activeEvent, startSavingEvent } = useCalendarstore()
   const { closeDateModal } = useUiStore()
+  const { startAddingNotification } = useNotificationStore()
 
   const [formValues, setFormValues] = useState(initModalContent)
 
@@ -59,19 +61,21 @@ export const CalendarModalContent = () => {
   const validateForm = () => {
     const timeDif = differenceInSeconds(end, start)
 
-    console.log(title.length)
     if (isNaN(start)) {
       setValidations((prev) => ({ ...prev, start: true }))
+      startAddingNotification(notificationTypes.error, 'La fecha inicial no es correcta')
       return false
     }
 
     if (isNaN(end)) {
       setValidations((prev) => ({ ...prev, end: true }))
+      startAddingNotification(notificationTypes.error, 'La fecha final no es correcta')
       return false
     }
 
     if (timeDif < 0 || isNaN(timeDif)) {
       setValidations((prev) => ({ ...prev, start: true, end: true }))
+      startAddingNotification(notificationTypes.error, 'La final ha de ser mayor a la inicial')
       return false
     }
 
@@ -79,6 +83,7 @@ export const CalendarModalContent = () => {
 
     if (title.length <= 0) {
       setValidations((prev) => ({ ...prev, title: true }))
+      startAddingNotification(notificationTypes.error, 'El título es obligatorio')
       return false
     }
 
