@@ -13,6 +13,7 @@ export const checkJwt = (req: RequestExtended, res: Response, next: NextFunction
     req.user = {
       email: isOk.email,
       id: isOk.id,
+      name: isOk.name,
     }
 
     if (!isOk) {

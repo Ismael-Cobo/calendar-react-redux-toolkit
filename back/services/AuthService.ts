@@ -15,7 +15,7 @@ export const registerNewUser = async ({ email, name, password }: UserInterface) 
   return await User.create({ email, name, password: passwordHashed, state: false })
 }
 
-export const login = async ({ email, password }: UserInterface) => {
+export const login = async ({ email, password, name }: UserInterface) => {
   const userToFind = await User.findOne({ where: { email } })
 
   if (!userToFind) throw new UserNotFound('Credenciales incorrectas', 400)
@@ -24,7 +24,7 @@ export const login = async ({ email, password }: UserInterface) => {
 
   if (!passwordHashed) throw new UserNotFound('Credenciales incorrectas', 400)
 
-  const token = generateToken({ id: `${userToFind.id}` || '', email })
+  const token = generateToken({ id: `${userToFind.id}` || '', email, name: userToFind.name })
 
   const data = {
     ...userToFind.dataValues,
