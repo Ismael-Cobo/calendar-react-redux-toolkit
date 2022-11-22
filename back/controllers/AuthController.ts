@@ -7,8 +7,6 @@ export const loginController = async (req: RequestExtended, res: Response) => {
     const { body } = req
     const user = await login(body)
 
-    console.log(req.user)
-
     return res.status(200).json({
       ok: true,
       msg: 'usuario logeado correctamente',
@@ -39,4 +37,15 @@ export const registerController = async ({ body }: Request, res: Response) => {
       data: null,
     })
   }
+}
+
+export const renewToken = async (req: RequestExtended, res: Response) => {
+  const jwtByUser = req.headers.authorization
+  console.log(req.user)
+  const token = jwtByUser?.split(' ').pop()
+  return res.status(200).json({
+    ok: true,
+    msg: 'token revalidado',
+    data: { ...req.user, token },
+  })
 }
