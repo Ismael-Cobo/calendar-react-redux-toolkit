@@ -49,11 +49,37 @@ export const useAuthStore = () => {
     }
   }
 
+  const checkingAuthToken = async () => {
+    const token = localStorage.getItem('token')
+
+    if (!token) dispatch(onLogout())
+    dispatch(onChecking())
+
+    try {
+      const { data } = await calendarApi.get('/auth/renew', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      })
+      const { token, email, name, id } = data.data
+      localStorage.setItem('token', token)
+      dispatch(onLogin({ _id: id, email, name }))
+    } catch (error) {
+      localStorage.clear()
+      dispatch(onLogout())
+    }
+  }
+
+  const startLogOut = () => {
+    dispatch(onLogout())
+    localStorage.clear()
+  }
+
   return {
     status,
     user,
 
     startLogin,
     startRegister,
+    checkingAuthToken,
+    startLogOut,
   }
 }
