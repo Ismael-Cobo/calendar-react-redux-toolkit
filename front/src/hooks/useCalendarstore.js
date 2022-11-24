@@ -1,5 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { onAddNewEvent, onDeleteEvent, onSetEventActive, onUnsetEventActive, onUpdateEvent } from '../context/calendar'
+import { v4 } from 'uuid'
+import calendarApi from '../api/calendarApi'
+import {
+  onAddNewEvent,
+  onDeleteEvent,
+  onSetEventActive,
+  onUnsetEventActive,
+  onUpdateEvent,
+  onLoadEvents,
+} from '../context/calendar'
+import { addNotification } from '../context/notification'
+import { notificationTypes } from '../notifaction'
 
 export const useCalendarstore = () => {
   const dispatch = useDispatch()
@@ -26,9 +37,25 @@ export const useCalendarstore = () => {
 
       //save new event
 
-      dispatch(onAddNewEvent({ ...calendarEvent, _id: new Date().getTime() }))
+      const { data } = await calendarApi.post(
+        '/event',
+        {
+          title: calendarEvent.title,
+          description: calendarEvent.notes,
+          start: calendarEvent.start,
+          end: calendarEvent.end,
+          user_id: calendarEvent.user._id,
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      )
+      const { title, notes, start, end } = data.data
+      dispatch(onAddNewEvent({ title, notes, start, end, user: calendarEvent.user }))
+      dispatch(addNotification({ id: v4(), type: notificationTypes.error, message: 'El evento se ha guardado' }))
     } catch (error) {
-      console.log(error)
+      const { msg } = error.response.data
+      dispatch(addNotification({ id: v4(), type: notificationTypes.error, message: msg }))
     }
   }
 
@@ -41,13 +68,27 @@ export const useCalendarstore = () => {
     }
   }
 
+  const startLoadingEvents = async () => {
+    try {
+      const { data } = await calendarApi.get('/event', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      })
+
+      dispatch(onLoadEvents(data.data))
+    } catch (error) {
+      const { msg } = error.response.data
+      dispatch(addNotification({ id: v4(), type: notificationTypes.error, message: msg }))
+    }
+  }
+
   return {
     events,
     activeEvent,
 
     setActiveEvent,
-    unSetActiveEvent,
-    startSavingEvent,
     startDeletingEvent,
+    startLoadingEvents,
+    startSavingEvent,
+    unSetActiveEvent,
   }
 }

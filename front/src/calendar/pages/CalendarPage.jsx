@@ -8,11 +8,16 @@ import { localizer, getMessagesES, eventsStyleGetter } from '../../utils/calenda
 
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { useCalendarstore, useUiStore } from '../../hooks'
+import { useEffect } from 'react'
 
 export const CalendarPage = () => {
   const [view, setView] = useState(localStorage.getItem('view') || 'month')
   const { openDateModal } = useUiStore()
-  const { events, setActiveEvent, activeEvent } = useCalendarstore()
+  const { events, setActiveEvent, activeEvent, startLoadingEvents } = useCalendarstore()
+
+  useEffect(() => {
+    startLoadingEvents()
+  }, [])
 
   const onDoubleClickEvent = (props) => {
     openDateModal()

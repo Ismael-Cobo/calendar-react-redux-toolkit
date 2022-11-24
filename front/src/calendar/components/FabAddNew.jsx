@@ -1,9 +1,10 @@
 import { addHours } from 'date-fns'
 import { Button } from 'react-bootstrap'
-import { useCalendarstore, useUiStore } from '../../hooks'
+import { useAuthStore, useCalendarstore, useUiStore } from '../../hooks'
 
 export const FabAddNew = () => {
   const { setActiveEvent } = useCalendarstore()
+  const { user } = useAuthStore()
   const { openDateModal } = useUiStore()
 
   const handleClick = () => {
@@ -13,8 +14,8 @@ export const FabAddNew = () => {
       end: addHours(new Date(), 1),
       notes: '',
       user: {
-        _id: 123,
-        name: 'Ismael',
+        _id: user._id,
+        name: user.name,
       },
     }
 
