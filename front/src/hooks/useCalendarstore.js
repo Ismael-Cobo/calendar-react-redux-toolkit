@@ -11,6 +11,7 @@ import {
 } from '../context/calendar'
 import { addNotification } from '../context/notification'
 import { notificationTypes } from '../notifaction'
+import { converDateEvents } from '../utils/calendar'
 
 export const useCalendarstore = () => {
   const dispatch = useDispatch()
@@ -29,8 +30,23 @@ export const useCalendarstore = () => {
     try {
       // Hacer la petición al backend
 
-      if (calendarEvent._id) {
+      if (calendarEvent.id) {
         // update existing event
+        const { data } = await calendarApi.put(
+          '/event',
+          {
+            title: calendarEvent.title,
+            description: calendarEvent.notes,
+            start: calendarEvent.start,
+            end: calendarEvent.end,
+            user_id: calendarEvent.user._id,
+            id: calendarEvent.id,
+          },
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          }
+        )
+        console.log(data.data)
         dispatch(onUpdateEvent(calendarEvent))
         return
       }
@@ -52,17 +68,17 @@ export const useCalendarstore = () => {
       )
       const { title, notes, start, end } = data.data
       dispatch(onAddNewEvent({ title, notes, start, end, user: calendarEvent.user }))
-      dispatch(addNotification({ id: v4(), type: notificationTypes.error, message: 'El evento se ha guardado' }))
+      dispatch(addNotification({ id: v4(), type: notificationTypes.success, message: 'El evento se ha guardado' }))
     } catch (error) {
       const { msg } = error.response.data
       dispatch(addNotification({ id: v4(), type: notificationTypes.error, message: msg }))
     }
   }
 
-  const startDeletingEvent = async (_id) => {
+  const startDeletingEvent = async (id) => {
     try {
       // Hacer la petición al backend y verificar que exista
-      dispatch(onDeleteEvent(_id))
+      dispatch(onDeleteEvent(id))
     } catch (error) {
       console.log(error)
     }
@@ -74,7 +90,7 @@ export const useCalendarstore = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       })
 
-      dispatch(onLoadEvents(data.data))
+      dispatch(onLoadEvents(converDateEvents(data.data)))
     } catch (error) {
       const { msg } = error.response.data
       dispatch(addNotification({ id: v4(), type: notificationTypes.error, message: msg }))
