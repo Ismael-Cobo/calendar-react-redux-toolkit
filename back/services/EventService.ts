@@ -1,11 +1,20 @@
 import { IllegalArguments, EventNotFound, UserNotFound, DateEvent } from '../handlers'
-import { EventInterface } from '../interfaces/Event'
+import { EventInterface, EventPlain } from '../interfaces'
+import { EventMapper } from '../mapper'
 import { Events } from '../models/Event'
 import { User } from '../models/User'
 import { findOneById } from './UserService'
 
-export const findAll = async (includeUser: boolean): Promise<EventInterface[]> => {
-  return await Events.findAll(includeUser ? { include: [{ model: User }] } : {})
+export const findAll = async (includeUser: boolean): Promise<EventMapper[]> => {
+  const eventsToMap = await Events.findAll(includeUser ? { include: [{ model: User }] } : {})
+
+  const events: EventMapper[] = []
+  eventsToMap.forEach((event) => {
+    const e = new EventMapper(event)
+    events.push(e)
+  })
+
+  return events
 }
 
 export const findAllByUserId = async (userId: number): Promise<EventInterface[]> => {
