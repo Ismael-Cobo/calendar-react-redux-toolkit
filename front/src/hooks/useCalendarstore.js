@@ -46,7 +46,6 @@ export const useCalendarstore = () => {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
           }
         )
-        console.log(data.data)
         dispatch(onUpdateEvent(calendarEvent))
         return
       }

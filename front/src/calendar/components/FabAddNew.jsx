@@ -14,7 +14,7 @@ export const FabAddNew = () => {
       end: addHours(new Date(), 1),
       notes: '',
       user: {
-        _id: user._id,
+        _id: Number(user._id),
         name: user.name,
       },
     }

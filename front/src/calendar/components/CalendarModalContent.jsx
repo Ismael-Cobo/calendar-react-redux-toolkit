@@ -96,7 +96,7 @@ export const CalendarModalContent = () => {
 
   return (
     <>
-      <h1> {activeEvent?.user._id ? 'Actualizar evento' : 'Nuevo evento'} </h1>
+      <h1> {activeEvent?.id ? 'Actualizar evento' : 'Nuevo Evento'} </h1>
       <hr />
       <form onSubmit={onSubmit} className='container'>
         <div className='form-group mb-2'>

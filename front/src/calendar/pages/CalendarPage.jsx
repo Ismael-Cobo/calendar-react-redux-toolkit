@@ -4,11 +4,12 @@ import { Calendar } from 'react-big-calendar'
 
 import { NavbarCalendar, CalendarEvent, CalendarModal, FabAddNew, FabDeleteEvent } from '../components'
 
-import { localizer, getMessagesES } from '../../utils/calendar'
+import { localizer, getMessagesES, isSameUser } from '../../utils/calendar'
 
-import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { useAuthStore, useCalendarstore, useUiStore } from '../../hooks'
 import { useEffect } from 'react'
+
+import 'react-big-calendar/lib/css/react-big-calendar.css'
 
 export const CalendarPage = () => {
   const [view, setView] = useState(localStorage.getItem('view') || 'month')
@@ -69,7 +70,7 @@ export const CalendarPage = () => {
       />
       <CalendarModal />
       <FabAddNew />
-      {activeEvent && <FabDeleteEvent />}
+      {!isSameUser(Number(user?._id), activeEvent?.user._id) && <FabDeleteEvent />}
     </>
   )
 }
