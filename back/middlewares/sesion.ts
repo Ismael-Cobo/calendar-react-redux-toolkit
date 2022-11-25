@@ -5,7 +5,6 @@ import { RequestExtended } from '../interfaces/RequestExtended'
 export const checkJwt = (req: RequestExtended, res: Response, next: NextFunction) => {
   try {
     const jwtByUser = req.headers.authorization
-
     const jwt = jwtByUser?.split(' ').pop()
 
     const isOk = verifyToken(`${jwt}`)
