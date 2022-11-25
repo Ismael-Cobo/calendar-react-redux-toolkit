@@ -6,10 +6,11 @@ import { registerLocale } from 'react-datepicker'
 import { addHours, differenceInSeconds } from 'date-fns'
 import es from 'date-fns/locale/es'
 
-import { useCalendarstore, useUiStore, useNotificationStore } from '../../hooks'
+import { useCalendarstore, useUiStore, useNotificationStore, useAuthStore } from '../../hooks'
 
 import 'react-datepicker/dist/react-datepicker.css'
 import { notificationTypes } from '../../notifaction'
+import { isSameUser } from '../../utils/calendar'
 
 registerLocale('es', es)
 
@@ -23,6 +24,7 @@ const initModalContent = {
 export const CalendarModalContent = () => {
   const { activeEvent, startSavingEvent } = useCalendarstore()
   const { closeDateModal } = useUiStore()
+  const { user } = useAuthStore()
   const { startAddingNotification } = useNotificationStore()
 
   const [formValues, setFormValues] = useState(initModalContent)
@@ -94,7 +96,7 @@ export const CalendarModalContent = () => {
 
   return (
     <>
-      <h1> Nuevo evento </h1>
+      <h1> {activeEvent?.user._id ? 'Actualizar evento' : 'Nuevo evento'} </h1>
       <hr />
       <form onSubmit={onSubmit} className='container'>
         <div className='form-group mb-2'>
@@ -107,6 +109,7 @@ export const CalendarModalContent = () => {
             showTimeSelect
             dateFormat='Pp'
             timeCaption='Hora'
+            disabled={isSameUser(Number(user?._id), activeEvent?.user._id)}
           />
         </div>
 
@@ -121,6 +124,7 @@ export const CalendarModalContent = () => {
             showTimeSelect
             dateFormat='Pp'
             timeCaption='Hora'
+            disabled={isSameUser(Number(user?._id), activeEvent?.user._id)}
           />
         </div>
 
@@ -135,6 +139,7 @@ export const CalendarModalContent = () => {
             autoComplete='off'
             value={title}
             onChange={handleInputChange}
+            disabled={isSameUser(Number(user?._id), activeEvent?.user._id)}
           />
           <small id='emailHelp' className='form-text text-muted'>
             Una descripción corta
@@ -150,13 +155,18 @@ export const CalendarModalContent = () => {
             name='notes'
             value={notes}
             onChange={handleInputChange}
+            disabled={isSameUser(Number(user?._id), activeEvent?.user._id)}
           ></textarea>
           <small id='emailHelp' className='form-text text-muted'>
             Información adicional
           </small>
         </div>
 
-        <button type='submit' className='btn btn-outline-primary btn-block'>
+        <button
+          type='submit'
+          className='btn btn-outline-primary btn-block'
+          disabled={isSameUser(Number(user?._id), activeEvent?.user._id)}
+        >
           <i className='far fa-save'></i>
           <span> Guardar</span>
         </button>
