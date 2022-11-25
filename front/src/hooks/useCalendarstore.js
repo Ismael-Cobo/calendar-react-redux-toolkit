@@ -8,6 +8,7 @@ import {
   onUnsetEventActive,
   onUpdateEvent,
   onLoadEvents,
+  onLogOut,
 } from '../context/calendar'
 import { addNotification } from '../context/notification'
 import { notificationTypes } from '../notifaction'
@@ -17,6 +18,7 @@ export const useCalendarstore = () => {
   const dispatch = useDispatch()
 
   const { events, activeEvent } = useSelector((state) => state.calendar)
+  const { user } = useSelector((state) => state.auth)
 
   const setActiveEvent = (calendarEvent) => {
     dispatch(onSetEventActive(calendarEvent))
@@ -65,10 +67,12 @@ export const useCalendarstore = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
       )
-      const { title, notes, start, end } = data.data
-      dispatch(onAddNewEvent({ title, notes, start, end, user: calendarEvent.user }))
+      const { title, notes, start, end, id } = data.data
+      const event = converDateEvents([{ id, title, notes, start, end, user: calendarEvent.user }])[0]
+      dispatch(onAddNewEvent(event))
       dispatch(addNotification({ id: v4(), type: notificationTypes.success, message: 'El evento se ha guardado' }))
     } catch (error) {
+      console.log(error)
       const { msg } = error.response.data
       dispatch(addNotification({ id: v4(), type: notificationTypes.error, message: msg }))
     }
@@ -77,9 +81,15 @@ export const useCalendarstore = () => {
   const startDeletingEvent = async (id) => {
     try {
       // Hacer la petición al backend y verificar que exista
-      dispatch(onDeleteEvent(id))
+      const { data } = await calendarApi.delete(`/event/${id}`, {
+        data: { user_id: user._id },
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      })
+      dispatch(onDeleteEvent({ id }))
+      dispatch(addNotification({ id: v4(), type: notificationTypes.success, message: data.msg }))
     } catch (error) {
-      console.log(error)
+      const { msg } = error.response.data
+      dispatch(addNotification({ id: v4(), type: notificationTypes.error, message: msg }))
     }
   }
 
@@ -96,6 +106,10 @@ export const useCalendarstore = () => {
     }
   }
 
+  const startLogingOut = () => {
+    dispatch(onLogOut())
+  }
+
   return {
     events,
     activeEvent,
@@ -103,6 +117,7 @@ export const useCalendarstore = () => {
     setActiveEvent,
     startDeletingEvent,
     startLoadingEvents,
+    startLogingOut,
     startSavingEvent,
     unSetActiveEvent,
   }

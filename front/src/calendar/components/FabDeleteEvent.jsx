@@ -6,7 +6,7 @@ export const FabDeleteEvent = () => {
   const { activeEvent, startDeletingEvent } = useCalendarstore()
 
   const handleClick = () => {
-    startDeletingEvent(activeEvent._id)
+    startDeletingEvent(activeEvent.id)
   }
 
   return (
