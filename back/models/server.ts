@@ -5,6 +5,8 @@ import { authRouter, userRouter, eventRouter } from '../router'
 
 import db from '../db/connection'
 
+import { PORT } from '../config/dbConfig'
+
 export class Server {
   private app: Application
   private port: string
@@ -16,7 +18,7 @@ export class Server {
 
   constructor() {
     this.app = express()
-    this.port = process.env.PORT || '3000'
+    this.port = PORT
 
     // Llamar a la base de datos
     this.dbConnection()
