@@ -20,7 +20,9 @@ const registerNewUser = ({ email, name, password }) => __awaiter(void 0, void 0,
     if (checkUserExist)
         throw new handlers_1.UserAlreadyExists('User already exist', 404);
     const passwordHashed = yield (0, handlers_1.encryptPassword)(password);
-    return yield User_1.User.create({ email, name, password: passwordHashed, state: false });
+    const newUser = yield User_1.User.create({ email, name, password: passwordHashed, state: false });
+    const token = (0, jwt_1.generateToken)({ id: `${newUser.id}` || '', email, name: newUser.name });
+    return Object.assign(Object.assign({}, newUser.dataValues), { token });
 });
 exports.registerNewUser = registerNewUser;
 const login = ({ email, password, name }) => __awaiter(void 0, void 0, void 0, function* () {

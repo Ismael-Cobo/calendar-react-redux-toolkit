@@ -12,7 +12,14 @@ export const registerNewUser = async ({ email, name, password }: UserInterface) 
 
   const passwordHashed = await encryptPassword(password)
 
-  return await User.create({ email, name, password: passwordHashed, state: false })
+  const newUser = await User.create({ email, name, password: passwordHashed, state: false })
+
+  const token = generateToken({ id: `${newUser.id}` || '', email, name: newUser.name })
+
+  return {
+    ...newUser.dataValues,
+    token,
+  }
 }
 
 export const login = async ({ email, password, name }: UserInterface) => {
